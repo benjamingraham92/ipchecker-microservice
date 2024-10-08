@@ -1,0 +1,48 @@
+# Composer dependencies
+/vendor/
+
+# Composer generated files
+/composer.lock
+
+# Ignore configuration files that may contain sensitive information
+.env
+.env.local
+.env.*.local
+
+# Laravel specific (if using Laravel)
+.phpunit.result.cache
+/storage/*.key
+/storage/*.lock
+/storage/logs/*.log
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/framework/cache/data/*
+/bootstrap/cache/*.php
+
+# Symfony specific (if using Symfony)
+var/*
+!var/.gitkeep
+.env.local.php
+.phpunit.result.cache
+phpunit.xml
+
+# WordPress specific (if using WordPress)
+wp-content/advanced-cache.php
+wp-content/cache/*
+wp-content/upgrade/*
+wp-content/uploads/*
+wp-content/wp-cache-config.php
+wp-content/plugins/hello.php
+wp-content/mu-plugins/*
+wp-content/db.php
+
+# Ignore IDE/editor-specific files
+/.idea/
+/.vscode/
+/nbproject/
+/*.sublime-workspace
+/*.sublime-project
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db

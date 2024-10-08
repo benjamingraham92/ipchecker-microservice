@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>IPAddressChecker</title>
+
+    <script type="text/javascript">
+
+        // let totalIPURL = "http://localhost:70/";
+        // let totalEmptyIPURL = "http://localhost:90/";
+        // let totalValidIPsURL = "http://localhost:5000/";
+        // let classifiedIPsURL = "http://localhost:8080/";
+        // let findCountryURL = "http://localhost:8000/";
+        // let findBadIPsURL = "http://localhost:8001/";
+        // let reverseProxyURLa = "http://localhost:5001/";
+        // let reverseProxyURLb = "http://localhost:5002/";
+
+        // let totalIPURL = "http://ipcheckertotalips.40038234.qpc.qubcloud.uk/";
+        // let totalEmptyIPURL = "http://ipcheckertotalemptyips.40038234.qpc.qubcloud.uk/";
+        // let totalValidIPsURL = "http://ipcheckertotalvalidips.40038234.qpc.qubcloud.uk/";
+        // let classifiedIPsURL = "http://ipcheckerclassifyips.40038234.qpc.qubcloud.uk/";
+        // let findCountryURL = "http://ipcheckerfindcountry.40038234.qpc.qubcloud.uk/";
+        // let findBadIPsURL = "http://ipcheckerfindbadips.40038234.qpc.qubcloud.uk/";
+
+        const reverseProxyURLa = 'http://ipcheckerreverseproxy.40038234.a.qpc.qubcloud.uk/';
+        const reverseProxyURLb = 'http://ipcheckerreverseproxy.40038234.b.qpc.qubcloud.uk/';
+
+        const reverseProxyEndpoints = [reverseProxyURLa, reverseProxyURLb];
+
+        const routeTotalIPs = "totalips";
+        const routeTotalEmptyIPs = "totalemptyips";
+        const routeTotalValidIPs = "totalvalidips";
+        const routeClassifyIPs = "classifyips";
+        const routeFindCountry = "findcountry";
+        const routeFindBadIPs = "findbadips";
+
+        function displayTotalIP(total_ips) {
+            document.getElementById('output-text').value = 'Total IP addresses = ' + total_ips;
+
+        }
+
+        function displayTotalEmpty(total_empty_ips) {
+            document.getElementById('output-text').value = 'Total empty IP addresses = ' + total_empty_ips;
+        }
+
+        function displayTotalValid(total_valid_ips, results) {
+            document.getElementById('output-text').value = 'Total valid IP addresses = ' + total_valid_ips + '\n' + results
+        }
+
+        function displayClassifiedIPs(classified_ips) {
+            document.getElementById('output-text').value = 'Classified IP addresses = \n' + classified_ips;
+        }
+
+        function displayIPCountries(ip_countries) {
+            document.getElementById('output-text').value = 'IP Countries = \n' + ip_countries;
+        }
+
+        function displayBadIPs(results) {
+            document.getElementById('output-text').value = 'Good or Bad IP addresses = \n' + results;
+        }
+
+        function clearText() {
+            document.getElementById('input-text').value = '';
+            document.getElementById('output-text').value = '';
+        }
+
+        function displayError(errorMessage) {
+            document.getElementById('output-text').value = errorMessage;
+        }
+
+        function getTotalIPs(index = 0) {
+            let items = document.getElementById('input-text').value
+            if (!items) {
+                displayError("Invalid input. Please check and try again.");
+                return;
+            }
+            if (index >= reverseProxyEndpoints.length) {
+                displayError("Server unavailable. Please try again later.");
+                return;
+            }
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        try {
+                            //let response = "This is not JSON";
+                            var j = JSON.parse(this.response);
+                            console.log('test -- ' + j.total_ips);
+                            let total_ips = j.total_ips;
+                            displayTotalIP(total_ips);
+                        } catch (e) {
+                            displayError("We're having trouble processing the information. Please try again later.");
+                        }
+                    } else if (this.status >= 400 && this.status < 500) {
+                        handleBackendError(this.status, this.statusText);
+                    } else {
+                        getTotalIPs(index + 1);
+                    }
+                }
+            };
+            // xhttp.open("GET", "http://example.com/invalid-endpoint");
+            const url = reverseProxyEndpoints[index] + routeTotalIPs + "/?items=" + items;
+            xhttp.open("GET", url);
+            xhttp.send();
+            return;
+        }
+
+        function getTotalEmptyIPs(index = 0) {
+            let items = document.getElementById('input-text').value
+            if (!items) {
+                displayError("Invalid input. Please check and try again.");
+                return;
+            }
+            if (index >= reverseProxyEndpoints.length) {
+                displayError("Server unavailable. Please try again later.");
+                return;
+            }
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        try {
+                            //let response = "This is not JSON";
+                            var j = JSON.parse(this.response);
+                            console.log('test -- ' + j.total_empty_ips);
+                            let total_empty_ips = j.total_empty_ips;
+                            displayTotalEmpty(total_empty_ips);
+                        } catch (e) {
+                            displayError("We're having trouble processing the information. Please try again later.");
+                        }
+                    } else if (this.status >= 400 && this.status < 500) {
+                        handleBackendError(this.status, this.statusText);
+                    } else {
+                        getTotalEmptyIPs(index + 1);
+                    }
+                }
+            };
+            //xhttp.open("GET", "http://example.com/invalid-endpoint");
+            const url = reverseProxyEndpoints[index] + routeTotalEmptyIPs + "/?items=" + items;
+            xhttp.open("GET", url);
+            xhttp.send();
+            return;
+        }
+
+        function getTotalValidIPs(index = 0) {
+            let items = document.getElementById('input-text').value;
+            if (!items) {
+                displayError("Invalid input. Please check and try again.");
+                return;
+            }
+            if (index >= reverseProxyEndpoints.length) {
+                displayError("Server unavailable. Please try again later.");
+                return;
+            }
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        try {
+                            //let response = "This is not JSON";
+                            var j = JSON.parse(this.response);
+                            console.log('test-- ' + j.total_valid_ips + j.results);
+                            let total_valid_ips = j.total_valid_ips;
+                            let results = j.results
+                            displayTotalValid(total_valid_ips, results);
+                        } catch (e) {
+                            displayError("We're having trouble processing the information. Please try again later.");
+                        }
+                    } else if (this.status >= 400 && this.status < 500) {
+                        handleBackendError(this.status, this.statusText);
+                    } else {
+                        getTotalValidIPs(index + 1);
+                    }
+                }
+            };
+            //xhttp.open("GET", "http://example.com/invalid-endpoint");
+            const url = reverseProxyEndpoints[index] + routeTotalValidIPs + "/?items=" + items;
+            xhttp.open("GET", url);
+            xhttp.send();
+            return;
+        }
+
+        function classifyIPs(index = 0) {
+            let items = document.getElementById('input-text').value;
+            if (!items) {
+                displayError("Invalid input. Please check and try again.");
+                return;
+            }
+            if (index >= reverseProxyEndpoints.length) {
+                displayError("Server unavailable. Please try again later.");
+                return;
+            }
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        try {
+                            //let response = "This is not JSON";
+                            var j = JSON.parse(this.response);
+                            console.log('test-- ' + j.classified_ips);
+                            let classified_ips = j.classified_ips;
+                            displayClassifiedIPs(classified_ips);
+                        } catch (e) {
+                            displayError("We're having trouble processing the information. Please try again later.");
+                        }
+                    } else if (this.status >= 400 && this.status < 500) {
+                        handleBackendError(this.status, this.statusText);
+                    } else {
+                        classifyIPs(index + 1);
+                    }
+                }
+            };
+            //xhttp.open("GET", "http://example.com/invalid-endpoint");
+            const url = reverseProxyEndpoints[index] + routeClassifyIPs + "/?items=" + items;
+            xhttp.open("GET", url);
+            xhttp.send();
+            return;
+        }
+
+        function findCountry(index = 0) {
+            let items = document.getElementById('input-text').value;
+            if (!items) {
+                displayError("Invalid input. Please check and try again.");
+                return;
+            }
+            if (index >= reverseProxyEndpoints.length) {
+                displayError("Servers unavailable. Please try again later.");
+                return;
+            }
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        try {
+                            //let response = "This is not JSON";
+                            var j = JSON.parse(this.response);
+                            console.log('test-- ' + j.ip_countries);
+                            let ip_countries = j.ip_countries;
+                            displayIPCountries(ip_countries);
+                        } catch (e) {
+                            displayError("We're having trouble processing the information. Please try again later.");
+                        }
+                    } else if (this.status >= 400 && this.status < 500) {
+                        handleBackendError(this.status, this.statusText);
+                    } else {
+                        findCountry(index + 1);
+                    }
+                }
+            };
+            //xhttp.open("GET", "http://example.com/invalid-endpoint");
+            const url = reverseProxyEndpoints[index] + routeFindCountry + "/?items=" + items;
+            xhttp.open("GET", url);
+            xhttp.send();
+            return;
+        }
+
+        function findBadIPs(index = 0) {
+            let items = document.getElementById('input-text').value;
+            if (!items) {
+                displayError("Invalid input. Please check and try again.");
+                return;
+            }
+            if (index >= reverseProxyEndpoints.length) {
+                displayError("Server unavailable. Please try again later.");
+                return;
+            }
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        try {
+                            //let response = "This is not JSON";
+                            var j = JSON.parse(this.response);
+                            console.log('test-- ' + j.results);
+                            let results = j.results;
+                            displayBadIPs(results);
+                        } catch (e) {
+                            displayError("We're having trouble processing the information. Please try again later.");
+                        }
+                    } else if (this.status >= 400 && this.status < 500) {
+                        handleBackendError(this.status, this.statusText);
+                    } else {
+                        findBadIPs(index + 1);
+                    }
+                }
+            };
+            //xhttp.open("GET", "http://example.com/invalid-endpoint");
+            const url = reverseProxyEndpoints[index] + routeFindBadIPs + "/?items=" + items;
+            xhttp.open("GET", url);
+            xhttp.send();
+            return;
+        }
+
+        function handleBackendError(status, responseText) {
+            let message;
+
+            switch (status) {
+                case 400:
+                    message = 'Invalid input. Please check and try again.';
+                    break;
+                case 404:
+                    message = 'Resource not found. Please check URL and try again.';
+                    break;
+                case 500:
+                    message = 'Server error. Please try again later.';
+                    break;
+                case 503:
+                    message = 'Server unavailable. Please try again later.';
+                    break;
+                case 0:
+                    message = 'Unexpected error occurred. Please try again.';
+                    break;
+            }
+
+            console.error(`Error ${status}: ${responseText}`);
+            displayError(message);
+        }
+
+    </script>
+
+    <style type="text/css">
+        body {
+            font-size: 150%;
+            font-family: monospace;
+        }
+
+        label {
+            display: inline-block;
+            width: 150px;
+            text-align: left;
+        }
+
+        #logo {
+            font-family: Calibri, sans-serif;
+            font-weight: lighter;
+            font-size: 30px;
+            color: #505050;
+            margin: 0.5em;
+        }
+
+        #normal-text {
+            font-family: Calibri, sans-serif;
+            font-size: 20px;
+            margin: 0.5em;
+        }
+
+        #ipcheck {
+            text-align: center;
+            margin-top: 1em;
+        }
+
+        #input-div {
+            text-align: center;
+            margin-top: 1em;
+            background-color: #d5d8dc;
+        }
+
+        #output-div {
+            text-align: center;
+            background-color: #808b96;
+        }
+
+        .input-items {
+            font-size: 90%;
+            color: black;
+            background-color: white;
+            padding: 0.2em;
+            margin: 0.2em;
+            font-family: monospace;
+            letter-spacing: 0.1em;
+            width: 600px;
+
+        }
+
+        .display-output {
+            font-size: 90%;
+            color: black;
+            background-color: white;
+            padding: 0.2em;
+            margin: 0.2em;
+            font-family: monospace;
+            letter-spacing: 0.1em;
+            width: 600px;
+
+        }
+
+        .button-active {
+            background-color: #2874a6;
+            color: white;
+            padding: 0px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 18px;
+            margin: 4px 2px;
+            cursor: pointer;
+            height: 50px;
+            width: 400px;
+        }
+
+        .button-inactive {
+            background-color: gray;
+            color: white;
+            padding: 0px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 18px;
+            margin: 4px 2px;
+            cursor: pointer;
+            height: 50px;
+            width: 400px;
+        }
+
+        .button-clear {
+            background-color: #c0392b;
+            color: white;
+            padding: 0px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 18px;
+            margin: 4px 2px;
+            cursor: pointer;
+            height: 40px;
+            width: 400px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="ipcheck">
+        <div id="logo">
+            IP Address Checker
+        </div>
+        <div id="input-div">
+            <p id="normal-text">
+                Paste your IP addresses here (separated by commas)..
+            </p>
+            <textarea class="input-items" id="input-text" rows="5" cols="35"
+                placeholder="Paste your IP addresses here.." value="">
+        </textarea>
+        </div>
+        <div id="output-div">
+            <p id="normal-text">
+                Results
+            </p>
+            <textarea class="display-output" id="output-text" rows="5" cols="35" readonly=1
+                placeholder="Results here..." value="">
+        </textarea>
+        </div>
+        <div>
+            <button class="button-active" onclick="getTotalIPs();">Total IP addresses</button>
+        </div>
+        <div>
+            <button class="button-active" onclick="getTotalEmptyIPs();">Total empty IP addresses</button>
+        </div>
+        <div>
+            <button class="button-active" onclick="getTotalValidIPs();">Total valid IP addresses</button>
+        </div>
+        <div>
+            <button class="button-active" onclick="classifyIPs();">Classify between IPv4 and IPv6</button>
+        </div>
+        <div>
+            <button class="button-active" onclick="findCountry();">Find country information</button>
+        </div>
+        <div>
+            <button class="button-active" onclick="findBadIPs();">Find bad IP addresses</button>
+        </div>
+        <div>
+            <button class="button-clear" onclick="clearText();">Clear</button>
+        </div>
+
+    </div>
+</body>
+
+<script type="text/javascript">
+</script>
+
+</html>

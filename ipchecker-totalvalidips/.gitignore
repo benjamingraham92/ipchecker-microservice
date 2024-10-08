@@ -1,0 +1,31 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# pytest cache directory
+.pytest_cache/
+
+# Logs and data
+*.log
+*.csv
+*.sqlite3
+
+# Virtual environment
+venv/
+.env/
+
+# VS Code settings
+.vscode/
+
+# Docker
+*.dockerfile
+
+# Ignore gitlab-runner builds
+.gitlab/
+builds/
+
+# Ignore coverage reports
+.coverage
+coverage.xml
+*.cover

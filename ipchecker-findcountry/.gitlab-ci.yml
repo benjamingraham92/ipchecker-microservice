@@ -1,0 +1,19 @@
+image: php:latest
+
+stages:
+  - test
+
+before_script:
+  - apt-get update -y
+  - apt-get install -y git unzip
+  - pecl install pcov
+  - docker-php-ext-enable pcov
+  - echo "pcov.enabled=1" > /usr/local/etc/php/conf.d/pcov.ini
+  - curl -sS https://getcomposer.org/installer | php
+  - mv composer.phar /usr/local/bin/composer
+  - composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
+
+test:
+  stage: test
+  script:
+    - vendor/bin/phpunit tests/
